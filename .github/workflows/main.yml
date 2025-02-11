@@ -30,7 +30,7 @@ jobs:
         with:
           images: joseph888/apinombres
 
-      - name: Build and push Docker image
+      - name: Build and push Docker imagee
         id: push
         uses: docker/build-push-action@v3
         with:
@@ -38,3 +38,4 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: joseph888/apinombres:latest
+
