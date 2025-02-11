@@ -28,7 +28,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v4
         with:
-          images: bryamdigar/profesoresbackend
+          images: joseph888/apinombres
 
       - name: Build and push Docker image
         id: push
@@ -37,4 +37,4 @@ jobs:
           context: .
           file: ./Dockerfile
           push: true
-          tags: bryamdigar/profesoresbackend:latest
+          tags: joseph888/apinombres:latest
