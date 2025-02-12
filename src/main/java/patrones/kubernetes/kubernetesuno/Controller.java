@@ -37,4 +37,8 @@ public class Controller {
     public String healthCheck() {
         return "Aplicación funcionando correctamente!";
     }
+    @DeleteMapping("/eliminarPersona/{id}")
+    public void eliminarPersona(@PathVariable String id) {
+        personaRepository.deleteById(id);
+    }
 }
