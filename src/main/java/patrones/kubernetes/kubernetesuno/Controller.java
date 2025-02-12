@@ -16,7 +16,7 @@ public class Controller {
     @Autowired
     private PersonaService personaRepository;
 
-        @PostMapping("/crearPesona")
+        @PostMapping("/crearPersona")
     public Persona crearPersona(@RequestBody PersonaDTO personaDTO) {
         Persona persona = new Persona();
         persona.setNombre(personaDTO.getNombre());
