@@ -46,7 +46,7 @@ jobs:
         with:
           repository: joseph8884/ManifestsApiNombres
           path: ManifestsApiNombres
-          token: ${{ secrets.GIT_TOKEN }}
+          token: ${{ secrets.JOSE_TOK }}
 
       # Actualizar el tag en values.yaml del chart
       - name: Update Helm chart image tag
