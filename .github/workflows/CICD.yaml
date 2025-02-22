@@ -44,18 +44,19 @@ jobs:
       - name: Checkout Helm chart repo
         uses: actions/checkout@v4
         with:
-          repository: joseph8884/ManifestsApiNombres
+          repository: joseph8884/ManifestsApiNombres 
+          ref: chart 
           path: ManifestsApiNombres
           token: ${{ secrets.JOSE_TOK }}
 
       # Actualizar el tag en values.yaml del chart
       - name: Update Helm chart image tag
         run: |
-          cd my-helm-chart
-          yq eval ".image.tag = \"${{ github.sha }}\"" -i values.yaml  # Ajusta la ruta
+          cd ManifestsApiNombres/my-helm-chart  # Ruta corregida
+          yq eval ".image.tag = \"${{ github.sha }}\"" -i values.yaml
 
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add .
+          git add values.yaml
           git commit -m "Update image tag to ${{ github.sha }}"
           git push
