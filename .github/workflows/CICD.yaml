@@ -39,10 +39,7 @@ jobs:
         run: |
           sudo curl -L https://github.com/mikefarah/yq/releases/latest/download/yq_linux_amd64 -o /usr/local/bin/yq
           sudo chmod +x /usr/local/bin/yq
-      - name: Configure Git credentials
-        run: |
-          git config --global url."https://x-access-token:${{ secrets.JOSE_TOK }}@github.com".insteadOf "https://github.com"
-
+          
       # Clonar el repositorio del chart Helm (ajusta la URL)
       - name: Checkout Helm chart repo
         uses: actions/checkout@v4
