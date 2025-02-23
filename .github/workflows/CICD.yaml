@@ -49,8 +49,7 @@ jobs:
 
       - name: Update Helm chart image tag and version
         run: |
-          cd ManifestsApiNombres/my-helm-chart
-
+          cd ManifestsApiNombres/my-helm-chart2
           # Incrementar versión automáticamente (ej: 0.1.0 → 0.1.1)
           CURRENT_VERSION=$(yq eval '.version' Chart.yaml)
           NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
@@ -61,7 +60,7 @@ jobs:
 
       - name: Package Helm chart
         run: |
-          cd ManifestsApiNombres/my-helm-chart
+          cd ManifestsApiNombres/my-helm-chart2
           helm package . --destination ./charts
 
       - name: Prepare gh-pages branch
@@ -70,7 +69,7 @@ jobs:
           git checkout --orphan gh-pages
           git rm -rf .
           mkdir -p charts/$NEW_VERSION
-          cp my-helm-chart/charts/*.tgz charts/$NEW_VERSION/
+          cp my-helm-chart2/charts/*.tgz charts/$NEW_VERSION/
           helm repo index charts --url https://joseph8884.github.io/ManifestsApiNombres/charts
 
           git config user.name "GitHub Actions"
