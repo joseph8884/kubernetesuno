@@ -51,11 +51,24 @@ jobs:
         id: versioning
         run: |
           cd ManifestsApiNombres/my-helm-chart2
+          
+          # Actualizar versión del chart
           CURRENT_VERSION=$(yq eval '.version' Chart.yaml)
           NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
           echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           yq eval ".version = \"$NEW_VERSION\"" -i Chart.yaml
+          
+          # Actualizar tag de la imagen en values.yaml
           yq eval ".image.tag = \"${{ github.sha }}\"" -i values.yaml
+
+      - name: Commit and push chart changes
+        run: |
+          cd ManifestsApiNombres
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add my-helm-chart2/Chart.yaml my-helm-chart2/values.yaml
+          git commit -m "Update chart to version ${{ env.NEW_VERSION }}"
+          git push origin chart
 
       - name: Package Helm chart
         run: |
@@ -65,22 +78,21 @@ jobs:
       - name: Prepare gh-pages branch
         run: |
           cd ManifestsApiNombres
+          git fetch origin gh-pages || true  # Asegurar que existe la referencia
           git checkout --orphan gh-pages
-          git rm -rf .
+          git reset --hard
+          git rm -rf . || true
+          
+          # Copiar nuevos charts
           mkdir -p charts
           cp my-helm-chart2/charts/*.tgz charts/
+          
+          # Generar índice del repositorio
           helm repo index charts --url https://joseph8884.github.io/ManifestsApiNombres/charts
-
+          
+          # Configurar y commit
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
           git add charts/
           git commit -m "Publish chart version ${{ env.NEW_VERSION }}"
           git push origin gh-pages --force
-
-      - name: Push changes to chart repo
-        run: |
-          cd ManifestsApiNombres
-          git checkout chart  # Asegúrate de estar en la rama correcta
-          git add my-helm-chart2/Chart.yaml my-helm-chart2/values.yaml
-          git commit -m "Update chart to version ${{ env.NEW_VERSION }}"
-          git push
