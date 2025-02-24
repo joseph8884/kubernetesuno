@@ -48,14 +48,13 @@ jobs:
           token: ${{ secrets.JOSE_TOK }}
 
       - name: Update Helm chart image tag and version
+        id: versioning
         run: |
           cd ManifestsApiNombres/my-helm-chart2
-          # Incrementar versión automáticamente (ej: 0.1.0 → 0.1.1)
           CURRENT_VERSION=$(yq eval '.version' Chart.yaml)
           NEW_VERSION=$(echo $CURRENT_VERSION | awk -F. '{$NF = $NF + 1;} 1' | sed 's/ /./g')
+          echo "NEW_VERSION=$NEW_VERSION" >> $GITHUB_ENV
           yq eval ".version = \"$NEW_VERSION\"" -i Chart.yaml
-
-          # Actualizar tag de la imagen
           yq eval ".image.tag = \"${{ github.sha }}\"" -i values.yaml
 
       - name: Package Helm chart
@@ -68,19 +67,20 @@ jobs:
           cd ManifestsApiNombres
           git checkout --orphan gh-pages
           git rm -rf .
-          mkdir -p charts/$NEW_VERSION
-          cp my-helm-chart2/charts/*.tgz charts/$NEW_VERSION/
+          mkdir -p charts
+          cp my-helm-chart2/charts/*.tgz charts/
           helm repo index charts --url https://joseph8884.github.io/ManifestsApiNombres/charts
 
           git config user.name "GitHub Actions"
           git config user.email "actions@github.com"
-          git add .
-          git commit -m "Publish chart version $NEW_VERSION"
+          git add charts/
+          git commit -m "Publish chart version ${{ env.NEW_VERSION }}"
           git push origin gh-pages --force
 
       - name: Push changes to chart repo
         run: |
           cd ManifestsApiNombres
-          git add .
-          git commit -m "Update chart to version $NEW_VERSION"
+          git checkout chart  # Asegúrate de estar en la rama correcta
+          git add my-helm-chart2/Chart.yaml my-helm-chart2/values.yaml
+          git commit -m "Update chart to version ${{ env.NEW_VERSION }}"
           git push
