@@ -41,10 +41,5 @@ public class Controller {
     public void eliminarPersona(@PathVariable String id) {
         personaRepository.deleteById(id);
     }
-    // probando
-    //Un cambio mas grande para probar
-    //Quiero pasar a version 2
-    // otra prueba
-    //me quiero matar
-
+    //proas
 }
